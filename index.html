@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+
+    <meta charset="utf-8">
+
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <style media="screen">
+
+      .toggle:checked + label {
+        text-decoration: line-through;
+      }
+
+      ul {
+        list-style: none;
+      }
+
+    </style>
+
+    <title>To do app</title>
+
+  </head>
+  <body>
+
+    <!-- div todoList -->
+    <div id="todoList" class="container">
+      <h1>{{ message }}</h1>
+      <!-- Input todo item  -->
+      <input class="new-todo" placeholder="What needs to be done?"
+      v-on:keyup.enter="createTodo" autofocus>
+      <!-- List items  -->
+      <ul>
+
+        <li v-for="todo in todos" :class="{ completed: todo.isDone, editing: todo === editing }">
+
+          <div class="view">
+            <input class="toggle" type="checkbox" v-model="todo.isDone">
+            <label v-on:dblclick="startEditing(todo)" >{{todo.text}}</label>
+            <button class="destroy btn btn-danger btn-sm" v-on:click="destroyTodo(todo)">Delete</button>
+          </div>
+          <input class="edit" v-on:keyup.esc="cancelEditing" v-on:keyup.enter="finishEditing" v-on:blur="finishEditing" placeholder="Doubleclick label and edit here">
+
+        </li>
+      </ul>
+      <strong>{{ todos.filter(t => !t.isDone).length }}</strong> item(s) left</span>
+    </div>
+    <!-- End of div todoList-->
+
+  </body>
+  <script>
+
+  var todoList = new Vue({
+    el: '#todoList',
+    data: {
+      message: 'TO DO LIST',
+      todos: [
+        { text: 'Learn Javascript', isDone: false },
+        { text: 'Learn Vue', isDone: false },
+        { text: 'Learn Godot', isDone: false },
+        { text: 'Learn JQuery', isDone: false }
+      ],
+      editing: null,
+    },
+    methods: {
+      createTodo(event) {
+        const textbox = event.target;
+        this.todos.push({ text: textbox.value.trim(), isDone: false });
+        textbox.value = '';
+      },
+      startEditing(todo) {
+        this.editing = todo;
+      },
+      finishEditing(event) {
+        if (!this.editing) { return; }
+        const textbox = event.target;
+        this.editing.text = textbox.value;
+        this.editing = null;
+      },
+      cancelEditing() {
+        this.editing = null;
+      },
+      destroyTodo(todo){
+        const index = this.todos.indexOf(todo);
+        this.todos.splice(index, 1);
+      },
+    },
+    computed: {
+      activeTodos() {
+        return this.todos.filter(t => !t.isDone);
+      }
+    },
+  })
+
+
+  </script>
+</html>
